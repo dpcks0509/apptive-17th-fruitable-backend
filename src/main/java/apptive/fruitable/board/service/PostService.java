@@ -1,15 +1,14 @@
-package apptive.fruitable.service;
+package apptive.fruitable.board.service;
 
-import apptive.fruitable.domain.post.Photo;
-import apptive.fruitable.domain.post.Post;
-import apptive.fruitable.dto.PhotoDto;
-import apptive.fruitable.dto.PostDto;
-import apptive.fruitable.repository.PhotoRepository;
-import apptive.fruitable.repository.PostRepository;
+import apptive.fruitable.board.domain.post.Photo;
+import apptive.fruitable.board.domain.post.Post;
+import apptive.fruitable.board.dto.PhotoDto;
+import apptive.fruitable.board.dto.PostDto;
+import apptive.fruitable.board.repository.PhotoRepository;
+import apptive.fruitable.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;

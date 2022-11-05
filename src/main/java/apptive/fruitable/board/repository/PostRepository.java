@@ -1,7 +1,6 @@
-package apptive.fruitable.repository;
+package apptive.fruitable.board.repository;
 
-import apptive.fruitable.domain.post.Post;
-import org.springframework.beans.factory.annotation.Autowired;
+import apptive.fruitable.board.domain.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

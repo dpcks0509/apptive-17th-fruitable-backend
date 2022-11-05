@@ -1,8 +1,10 @@
 package apptive.fruitable.repository;
 
-import apptive.fruitable.domain.post.Post;
-import apptive.fruitable.dto.PostDto;
-import apptive.fruitable.service.PostService;
+import apptive.fruitable.board.domain.post.Post;
+import apptive.fruitable.board.dto.PostDto;
+import apptive.fruitable.board.repository.PhotoRepository;
+import apptive.fruitable.board.repository.PostRepository;
+import apptive.fruitable.board.service.PostService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

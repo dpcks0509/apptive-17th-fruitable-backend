@@ -1,6 +1,6 @@
-package apptive.fruitable.dto;
+package apptive.fruitable.board.dto;
 
-import apptive.fruitable.domain.post.Post;
+import apptive.fruitable.board.domain.post.Post;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;

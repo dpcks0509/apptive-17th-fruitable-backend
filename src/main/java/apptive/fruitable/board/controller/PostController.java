@@ -1,8 +1,8 @@
-package apptive.fruitable.controller;
+package apptive.fruitable.board.controller;
 
-import apptive.fruitable.dto.PostDto;
-import apptive.fruitable.service.PhotoService;
-import apptive.fruitable.service.PostService;
+import apptive.fruitable.board.dto.PostDto;
+import apptive.fruitable.board.service.PhotoService;
+import apptive.fruitable.board.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
