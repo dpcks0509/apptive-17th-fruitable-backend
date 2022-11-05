@@ -1,10 +1,10 @@
-package apptive.fruitable.service;
+package apptive.fruitable.board.service;
 
-import apptive.fruitable.domain.post.Photo;
-import apptive.fruitable.domain.post.QPhoto;
-import apptive.fruitable.dto.PhotoDto;
-import apptive.fruitable.dto.PhotoResponseDto;
-import apptive.fruitable.repository.PhotoRepository;
+import apptive.fruitable.board.domain.post.Photo;
+import apptive.fruitable.board.domain.post.QPhoto;
+import apptive.fruitable.board.dto.PhotoDto;
+import apptive.fruitable.board.dto.PhotoResponseDto;
+import apptive.fruitable.board.repository.PhotoRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

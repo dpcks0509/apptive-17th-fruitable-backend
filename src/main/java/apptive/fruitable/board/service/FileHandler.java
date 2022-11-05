@@ -1,4 +1,4 @@
-package apptive.fruitable.service;
+package apptive.fruitable.board.service;
 
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Component;

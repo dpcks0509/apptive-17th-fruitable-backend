@@ -1,4 +1,4 @@
-package apptive.fruitable.domain.post;
+package apptive.fruitable.board.domain.post;
 
 import lombok.*;
 

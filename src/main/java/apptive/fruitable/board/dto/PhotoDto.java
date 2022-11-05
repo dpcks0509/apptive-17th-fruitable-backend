@@ -1,6 +1,6 @@
-package apptive.fruitable.dto;
+package apptive.fruitable.board.dto;
 
-import apptive.fruitable.domain.post.Photo;
+import apptive.fruitable.board.domain.post.Photo;
 import lombok.*;
 import org.modelmapper.ModelMapper;
 
