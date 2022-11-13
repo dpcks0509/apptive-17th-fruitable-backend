@@ -56,26 +56,18 @@ public class PostService {
     /**
      * 게시글 목록 가져오기
      */
-    /*public List<PostDto> getPostList() {
+    public List<PostDto> getPostList() {
         List<Post> postList = postRepository.findAll();
         List<PostDto> postDtoList = new ArrayList<>();
 
         for(Post post : postList) {
 
-            PostDto postDto = PostDto.builder()
-                    .userId(post.getUserId())
-                    .contact(post.getContact())
-                    .vege(post.getVege())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .price(post.getPrice())
-                    .endDate(post.getEndDate())
-                    .build();
+            PostDto postDto = PostDto.of(post);
 
             postDtoList.add(postDto);
         }
         return postDtoList;
-    }*/
+    }
 
     /**
      * 게시글 클릭시 상세게시글의 내용 확인
