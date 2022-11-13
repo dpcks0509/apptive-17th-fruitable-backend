@@ -1,4 +1,4 @@
-package apptive.fruitable.repository;
+package apptive.fruitable.board.service;
 
 import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class PostRepositoryTest {
+public class PostServiceTest {
 
     @Autowired
     PostService postService;
@@ -52,7 +52,9 @@ public class PostRepositoryTest {
         return multipartFileList;
     }
 
-    PostDto createPost() throws Exception {
+    @Test
+    public void 상품등록() throws Exception {
+
         PostDto postDto = new PostDto();
         postDto.setUserId("abc");
         postDto.setContact("123-456");
@@ -62,54 +64,14 @@ public class PostRepositoryTest {
         postDto.setPrice(123);
         postDto.setEndDate(LocalDateTime.now());
 
-        return postDto;
-    }
-
-    @Test
-    public void 상품조회() throws Exception {
-
-        PostDto postDto = createPost();
         List<MultipartFile> multipartFileList = createMultipartFiles();
+        //System.out.println(postDto.getTitle());
         Long postId = postService.savePost(postDto, multipartFileList);
-        Post post = postRepository.findById(postId)
-                .orElseThrow(EntityNotFoundException::new);
 
-        System.out.println(post.getTitle());
-        System.out.println(post.getVege());
-        System.out.println(post.getPrice());
-    }
-
-    @Test
-    public void 상품업데이트() throws Exception {
-
-        PostDto postDto = createPost();
-        List<MultipartFile> multipartFileList = createMultipartFiles();
-        Long postId = postService.savePost(postDto, multipartFileList);
         Post post = postRepository.findById(postId)
                 .orElseThrow(EntityNotFoundException::new);
 
         assertEquals(postDto.getPrice(), post.getPrice());
         assertEquals(postDto.getTitle(), post.getTitle());
-
-        postDto.setTitle("바뀌었습니다.");
-        postId = postService.update(postId, postDto, multipartFileList);
-
-        Post post1 = postRepository.findById(postId)
-                .orElseThrow(EntityNotFoundException::new);
-
-        assertEquals(postDto.getTitle(), post1.getTitle());
-    }
-
-    @Test
-    public void 상품삭제() throws Exception {
-
-        PostDto postDto = createPost();
-        List<MultipartFile> multipartFileList = createMultipartFiles();
-        Long postId = postService.savePost(postDto, multipartFileList);
-        Post post = postRepository.findById(postId)
-                .orElseThrow(EntityNotFoundException::new);
-
-        postService.deletePost(postId);
-        assertEquals(1, post.getId());
     }
 }

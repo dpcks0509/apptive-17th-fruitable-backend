@@ -1,5 +1,6 @@
 package apptive.fruitable.board.controller;
 
+import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.service.PhotoService;
 import apptive.fruitable.board.service.PostService;
@@ -14,8 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/posts")
 public class PostController {
 
     private final PostService postService;
@@ -23,74 +25,47 @@ public class PostController {
 
     /**
      * postDtoList를 "board/list"에 postList로 전달
-     * @param model
-     * @return
      */
-    /*@GetMapping("/")
-    public String list(Model model) {
+    @GetMapping("")
+    public List<PostDto> list() {
 
-        List<PostDto> postDtoList = postService.getPostList();
-        model.addAttribute("postList", postDtoList);
-        return "board/list";
-    }*/
+        return postService.getPostList();
+    }
 
     /**
      * 글쓰는 페이지로 이동
      */
-    @GetMapping("/post")
-    public String post(Model model) {
+    /*@GetMapping("/{postId}")
+    public PostDto getPostByUserId(@PathVariable Long postId) {
 
-        model.addAttribute("postDto", new PostDto());
-        return "board/post";
-    }
+        return postService.getPost(postId);
+    }*/
 
     /**
      * Post로 받은 데이터를 데이터베이스에 추가
      * @return 원래 화면
      */
-    @PostMapping("/post")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public String write(@Valid PostDto postDto, BindingResult bindingResult,
-                      Model model, @RequestParam("photoFile") List<MultipartFile> photoFileList) throws Exception {
-
-        if(bindingResult.hasErrors()) {
-            return "board/post";
-        }
+    public Long write(@Valid PostDto postDto, Model model,
+                      @RequestParam("photoFile") List<MultipartFile> photoFileList) throws Exception {
 
         if(photoFileList.get(0).isEmpty() && postDto.getId() == null) {
             model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 입력 값 입니다.");
-            return "board/post";
         }
 
-        try {
-            postService.savePost(postDto, photoFileList);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
-            return "board/post";
-        }
-
-        return "redirect:/";
+        return postService.savePost(postDto, photoFileList);
     }
 
     /**
      * 각 게시글 클릭시 /post/1 과 같이 get 요청, 해당 아이디의 데이터가 view로 전달되도록 함
-     * @param id
-     * @param model
-     * @return
+     * @param postId
+     * @return postId 에 해당하는 postDto 객체 전체
      */
-    @GetMapping("/post/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
+    @GetMapping("/{postId}")
+    public PostDto detail(@PathVariable Long postId) {
 
-        try {
-            PostDto postDto = postService.getPost(id);
-            model.addAttribute("postDto", postDto);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "존재하지 않는 상품입니다.");
-            model.addAttribute("postDto", new PostDto());
-            return "board/post";
-        }
-
-        return "board/detail";
+        return postService.getPost(postId);
     }
 
     /**
@@ -110,34 +85,31 @@ public class PostController {
     /**
      * 서버에 put 요청이 오면, 데이터베이스에 변경된 데이터를 저장함
      */
-    @PutMapping("/post/edit/{id}")
+    @PutMapping("/{postId}")
     @CrossOrigin
-    public String update(@PathVariable Long id,
+    public void update(@PathVariable Long postId,
                          PostDto postDto,
                          BindingResult bindingResult,
                          @RequestParam("photoFile") List<MultipartFile> photoFileList,
                          Model model) throws Exception {
 
-        if(bindingResult.hasErrors()) return "board/post";
+        if(bindingResult.hasErrors()) return;
 
-        if(photoFileList.get(0).isEmpty() && id == null) {
+        if(photoFileList.get(0).isEmpty() && postId == null) {
             model.addAttribute("errorMessage", "첫번재 상품 이미지는 필수 입력값 입니다.");
-            return "board/post";
+            return;
         }
 
         try {
-            postService.update(id, postDto, photoFileList);
+            postService.update(postId, postDto, photoFileList);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "상품 수정 중 에러가 발생했습니다.");
-            return "board/post";
         }
-        return "redirect:/";
     }
 
-    @DeleteMapping("/post/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    @DeleteMapping("/{postId}")
+    public void delete(@PathVariable("postId") Long postId) {
 
-        postService.deletePost(id);
-        return "redirect:/";
+        postService.deletePost(postId);
     }
 }

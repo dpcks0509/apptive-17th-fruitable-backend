@@ -27,7 +27,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
 
   servlet:
     multipart:
@@ -46,5 +46,5 @@ logging:
 #   org.hibernate.type: trace
 
 img:
-  location: /Users/hjhwang/Projects/Spring/fruitable/img #상품 이미지 업로드 경로
+  location: /Users/hjhwang/Projects/Spring/apptive-17th-fruitable-backend-main/img #상품 이미지 업로드 경로
   uploadPath: file:///Users/hjhwang/Projects/Spring/ #리소스 업로드 경로
