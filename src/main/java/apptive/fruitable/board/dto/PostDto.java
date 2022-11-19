@@ -1,6 +1,7 @@
 package apptive.fruitable.board.dto;
 
 import apptive.fruitable.board.domain.post.Post;
+import apptive.fruitable.login.entity.MemberEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -22,7 +23,7 @@ public class PostDto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String userId;
+    private MemberEntity userId;
 
     @NotBlank(message = "연락처를 입력해 주세요")
     private String contact;
