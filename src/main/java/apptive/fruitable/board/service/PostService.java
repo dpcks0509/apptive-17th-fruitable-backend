@@ -6,7 +6,9 @@ import apptive.fruitable.board.dto.PhotoDto;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.repository.PhotoRepository;
 import apptive.fruitable.board.repository.PostRepository;
+import apptive.fruitable.login.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
 
     private final PostRepository postRepository;

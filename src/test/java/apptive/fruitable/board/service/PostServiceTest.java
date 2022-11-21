@@ -4,7 +4,6 @@ import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.repository.PhotoRepository;
 import apptive.fruitable.board.repository.PostRepository;
-import apptive.fruitable.board.service.PostService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +52,20 @@ public class PostServiceTest {
         return multipartFileList;
     }
 
+    void createUser() throws Exception {
+
+        return;
+    }
+
     @Test
     public void 상품등록() throws Exception {
+
+        /*MemberDto member = new MemberDto("12345",
+                "pwd12345", "pwd12345", "name",
+                "email@naver.com", "phone");
+
+        memberService.save(member);
+        MemberEntity memberEntity = toSaveEntity(member);*/
 
         PostDto postDto = new PostDto();
         postDto.setUserId("abc");

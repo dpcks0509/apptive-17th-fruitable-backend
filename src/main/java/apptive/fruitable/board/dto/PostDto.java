@@ -1,6 +1,7 @@
 package apptive.fruitable.board.dto;
 
 import apptive.fruitable.board.domain.post.Post;
+import apptive.fruitable.login.entity.MemberEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -41,8 +42,8 @@ public class PostDto {
     private static ModelMapper modelMapper = new ModelMapper();
 
     /*@Builder
-    public PostDto(String userId, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate) {
-        this.userId = userId;
+    public PostDto(MemberEntity member, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate) {
+        this.member = member;
         this.contact = contact;
         this.vege = vege;
         this.title = title;

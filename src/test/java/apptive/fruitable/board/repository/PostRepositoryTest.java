@@ -2,9 +2,9 @@ package apptive.fruitable.board.repository;
 
 import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.repository.PhotoRepository;
-import apptive.fruitable.board.repository.PostRepository;
 import apptive.fruitable.board.service.PostService;
+import apptive.fruitable.login.dto.MemberDto;
+import apptive.fruitable.login.entity.MemberEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +53,12 @@ public class PostRepositoryTest {
     }
 
     PostDto createPost() throws Exception {
+
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setId("abc");
+
         PostDto postDto = new PostDto();
-        postDto.setUserId("abc");
+        //postDto.setUserId("abc");
         postDto.setContact("123-456");
         postDto.setVege(1);
         postDto.setTitle("채소 팝니다");
