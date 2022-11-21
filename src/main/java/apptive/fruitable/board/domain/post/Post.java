@@ -22,9 +22,9 @@ public class Post {
     private Long id;
 
     //회원 정보 (Userid - 외래키(@Column), contact - 직접 받아옴)
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "member_id")
-    private MemberEntity userId;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "member_id")
+    private String userId;
     @Column(nullable = false, length = 20)
     private String contact;
 

@@ -26,7 +26,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final PhotoRepository photoRepository;
     private final PhotoService photoService;
-    private final MemberRepository memberRepository;
 
     /**
      * 글쓰기 Form에서 내용을 입력한 뒤, '글쓰기' 버튼을 누르면 Post 형식으로 요청이 오고,

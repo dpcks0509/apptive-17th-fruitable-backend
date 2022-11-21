@@ -23,7 +23,7 @@ public class PostDto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private MemberEntity userId;
+    private String userId;
 
     @NotBlank(message = "연락처를 입력해 주세요")
     private String contact;
@@ -42,8 +42,8 @@ public class PostDto {
     private static ModelMapper modelMapper = new ModelMapper();
 
     /*@Builder
-    public PostDto(String userId, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate) {
-        this.userId = userId;
+    public PostDto(MemberEntity member, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate) {
+        this.member = member;
         this.contact = contact;
         this.vege = vege;
         this.title = title;
