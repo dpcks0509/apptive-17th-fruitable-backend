@@ -23,7 +23,7 @@ public class PostDto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String userId;
+    private MemberEntity userId;
 
     @NotBlank(message = "연락처를 입력해 주세요")
     private String contact;

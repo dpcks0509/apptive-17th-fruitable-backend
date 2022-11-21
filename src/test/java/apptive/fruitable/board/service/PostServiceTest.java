@@ -4,6 +4,10 @@ import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.repository.PhotoRepository;
 import apptive.fruitable.board.repository.PostRepository;
+import apptive.fruitable.login.dto.MemberDto;
+import apptive.fruitable.login.entity.MemberEntity;
+import apptive.fruitable.login.repository.MemberRepository;
+import apptive.fruitable.login.service.MemberService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,10 @@ public class PostServiceTest {
     PostRepository postRepository;
     @Autowired
     PhotoRepository photoRepository;
+    @Autowired
+    MemberService memberService;
+    @Autowired
+    MemberRepository memberRepository;
 
     List<MultipartFile> createMultipartFiles() throws Exception {
 
@@ -52,23 +60,18 @@ public class PostServiceTest {
         return multipartFileList;
     }
 
-    void createUser() throws Exception {
-
-        return;
-    }
-
     @Test
     public void 상품등록() throws Exception {
 
-        /*MemberDto member = new MemberDto("12345",
-                "pwd12345", "pwd12345", "name",
-                "email@naver.com", "phone");
+        MemberDto member = new MemberDto(1L,
+                "email@naver.com", "pwd12345", "name", 1);
 
         memberService.save(member);
-        MemberEntity memberEntity = toSaveEntity(member);*/
+        MemberEntity memberEntity = MemberEntity.toSaveEntity(member);
+        System.out.println(memberEntity.getEmail());
 
         PostDto postDto = new PostDto();
-        postDto.setUserId("abc");
+        postDto.setUserId(memberEntity);
         postDto.setContact("123-456");
         postDto.setVege(1);
         postDto.setTitle("채소 팝니다");
@@ -85,5 +88,6 @@ public class PostServiceTest {
 
         assertEquals(postDto.getPrice(), post.getPrice());
         assertEquals(postDto.getTitle(), post.getTitle());
+        System.out.println(post.getUserId().getEmail());
     }
 }
