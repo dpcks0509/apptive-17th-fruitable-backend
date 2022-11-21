@@ -55,7 +55,7 @@ public class PostRepositoryTest {
     PostDto createPost() throws Exception {
 
         MemberEntity memberEntity = new MemberEntity();
-        memberEntity.setId("abc");
+        memberEntity.setId(1L);
 
         PostDto postDto = new PostDto();
         //postDto.setUserId("abc");
