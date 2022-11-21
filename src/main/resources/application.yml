@@ -10,7 +10,7 @@ spring:
     host: smtp.naver.com #smtp 서버 주소
     port: 465 # 메일 인증서버 포트
     username: emailauthentication@naver.com #네이버 아이디
-    password: email123 #네이버 비밀번호
+    password: fruitable123! #네이버 비밀번호
     properties:
       mail:
         smtp:
@@ -27,13 +27,16 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+
+      ddl-auto: create
+
 
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 100MB
       enabled: true
+
 
     properties:
       hibernate:
@@ -43,8 +46,11 @@ spring:
 logging:
   level:
     org.hibernate.sql: debug
+
 #   org.hibernate.type: trace
+
 
 img:
   location: /Users/hjhwang/Projects/Spring/apptive-17th-fruitable-backend-main/img #상품 이미지 업로드 경로
   uploadPath: file:///Users/hjhwang/Projects/Spring/ #리소스 업로드 경로
+

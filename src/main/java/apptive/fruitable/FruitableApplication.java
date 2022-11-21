@@ -10,15 +10,16 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @EnableJpaAuditing
 public class FruitableApplication {
 
-	public static void main(String[] args) throws Exception{
-		SpringApplication.run(FruitableApplication.class, args);
-	}
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(FruitableApplication.class, args);
+    }
 
-	/*
-	 * @PutMapping 과 @DeleteMapping 작동할 수 있도록 해줌
-	 */
-	@Bean
-	public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-		return new HiddenHttpMethodFilter();
-	}
+    /*
+     * @PutMapping 과 @DeleteMapping 작동할 수 있도록 해줌
+     */
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
+    }
 }
+
