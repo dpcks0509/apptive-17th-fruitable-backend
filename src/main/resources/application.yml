@@ -27,7 +27,17 @@ spring:
 
   jpa:
     hibernate:
+
       ddl-auto: create
+
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+      enabled: true
+
+
     properties:
       hibernate:
         format_sql: true
@@ -36,4 +46,11 @@ spring:
 logging:
   level:
     org.hibernate.sql: debug
+
 #   org.hibernate.type: trace
+
+
+img:
+  location: /Users/hjhwang/Projects/Spring/apptive-17th-fruitable-backend-main/img #상품 이미지 업로드 경로
+  uploadPath: file:///Users/hjhwang/Projects/Spring/ #리소스 업로드 경로
+
