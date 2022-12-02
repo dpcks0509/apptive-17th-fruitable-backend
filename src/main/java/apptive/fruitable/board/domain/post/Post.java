@@ -2,6 +2,8 @@ package apptive.fruitable.board.domain.post;
 
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.login.entity.MemberEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,7 +24,8 @@ public class Post {
     private Long id;
 
     //회원 정보 (Userid - 외래키(@Column), contact - 직접 받아옴)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     //@JoinColumn(name = "member_id")
     private MemberEntity userId;
     @Column(nullable = false, length = 20)

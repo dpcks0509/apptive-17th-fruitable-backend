@@ -4,6 +4,8 @@ import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.service.PhotoService;
 import apptive.fruitable.board.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "post controller")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
@@ -26,6 +29,10 @@ public class PostController {
     /**
      * postDtoList를 "board/list"에 postList로 전달
      */
+    @Operation(
+            summary = "post list api summary",
+            description = "전체 게시글 리스트 가져오기"
+    )
     @GetMapping("")
     public List<PostDto> list() {
 
@@ -45,6 +52,10 @@ public class PostController {
      * Post로 받은 데이터를 데이터베이스에 추가
      * @return 원래 화면
      */
+    @Operation(
+            summary = "게시글 작성 api summary",
+            description = "게시글 작성"
+    )
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long write(@Valid PostDto postDto, Model model,
@@ -62,6 +73,10 @@ public class PostController {
      * @param postId
      * @return postId 에 해당하는 postDto 객체 전체
      */
+    @Operation(
+            summary = "상세게시글 api summary",
+            description = "상세 게시글 확인 가능"
+    )
     @GetMapping("/{postId}")
     public PostDto detail(@PathVariable Long postId) {
 

@@ -9,6 +9,7 @@ import apptive.fruitable.login.entity.MemberEntity;
 import apptive.fruitable.login.repository.MemberRepository;
 import apptive.fruitable.login.service.MemberService;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,6 +44,7 @@ public class PostServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @BeforeEach
     List<MultipartFile> createMultipartFiles() throws Exception {
 
         List<MultipartFile> multipartFileList = new ArrayList<>();
@@ -63,7 +65,7 @@ public class PostServiceTest {
     @Test
     public void 상품등록() throws Exception {
 
-        MemberDto member = new MemberDto(1L,
+        MemberDto member = new MemberDto(3L,
                 "email@naver.com", "pwd12345", "name", 1);
 
         memberService.save(member);
