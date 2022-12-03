@@ -85,6 +85,7 @@ public class MemberController {
 
         if (!memberService.nameDuplicate(updateMember.getNewName())) {
             memberService.updateName(memberDto);
+            session.setAttribute("name",updateMember.getNewName());
             return new ResponseEntity<>("닉네임 수정 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("닉네임 중복", HttpStatus.BAD_REQUEST);
@@ -105,6 +106,7 @@ public class MemberController {
 
         if ((updateMember.getPwd().equals(sessionPwd) && (updateMember.getNewPwd().equals(updateMember.getNewPwd2())))) {
             memberService.updatePwd(memberDto);
+            session.setAttribute("pwd",updateMember.getNewPwd());
             return new ResponseEntity<>("비밀번호 수정 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.BAD_REQUEST);
