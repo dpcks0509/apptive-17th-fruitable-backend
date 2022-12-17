@@ -1,14 +1,16 @@
 package apptive.fruitable.board.domain.post;
 
+import apptive.fruitable.board.domain.tag.Tag;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.login.entity.MemberEntity;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @NoArgsConstructor
@@ -22,7 +24,8 @@ public class Post {
     private Long id;
 
     //회원 정보 (Userid - 외래키(@Column), contact - 직접 받아옴)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     //@JoinColumn(name = "member_id")
     private MemberEntity userId;
     @Column(nullable = false, length = 20)
@@ -45,6 +48,13 @@ public class Post {
             orphanRemoval = true
     )
     private List<Photo> photo = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "post",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     /*@Builder
     public Post(String userId, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate, Long fileId) {
