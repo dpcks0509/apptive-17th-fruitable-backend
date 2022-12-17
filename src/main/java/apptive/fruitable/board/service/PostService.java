@@ -2,10 +2,14 @@ package apptive.fruitable.board.service;
 
 import apptive.fruitable.board.domain.post.Photo;
 import apptive.fruitable.board.domain.post.Post;
+import apptive.fruitable.board.domain.tag.Tag;
 import apptive.fruitable.board.dto.PhotoDto;
 import apptive.fruitable.board.dto.PostDto;
+import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.dto.TagDto;
 import apptive.fruitable.board.repository.PhotoRepository;
 import apptive.fruitable.board.repository.PostRepository;
+import apptive.fruitable.board.repository.TagRepository;
 import apptive.fruitable.login.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +30,38 @@ public class PostService {
     private final PostRepository postRepository;
     private final PhotoRepository photoRepository;
     private final PhotoService photoService;
+    private final TagService tagService;
+    private final TagRepository tagRepository;
 
     /**
      * 글쓰기 Form에서 내용을 입력한 뒤, '글쓰기' 버튼을 누르면 Post 형식으로 요청이 오고,
      * PostService의 savePost()를 실행하게 된다.
      */
     @Transactional
-    public Long savePost(PostDto postDto, List<MultipartFile> files) throws Exception {
+    public Long savePost(PostRequestDto requestDto,
+                         List<String> tags,
+                         List<MultipartFile> files) throws Exception {
 
         //System.out.println(postDto.getTitle());
         //상품 등록
         Post post = new Post();
-        post.updatePost(postDto);
         //System.out.println(post.getTitle());
+        PostDto postDto = new PostDto();
+
+        postDto.setId(requestDto.getId());
+        postDto.setUserId(requestDto.getUserId());
+        postDto.setContact(requestDto.getContact());
+        postDto.setVege(requestDto.getVege());
+        postDto.setTitle(requestDto.getTitle());
+        postDto.setTitle(requestDto.getTitle());
+        postDto.setPrice(requestDto.getPrice());
+        postDto.setEndDate(requestDto.getEndDate());
+        post.updatePost(postDto);
+
         postRepository.save(post);
+
+        //태그 저장
+        tagService.saveTag(tags);
 
         //이미지 등록
         for(int i=0; i<files.size(); i++) {
@@ -88,10 +110,19 @@ public class PostService {
             photoDtoList.add(photoDto);
         }
 
+        /*List<Tag> tagList = tagRepository.findAllById(Collections.singleton(id));
+        List<TagDto> tagDtoList = new ArrayList<>();
+
+        for(Tag tag : tagList) {
+            TagDto tagDto = TagDto.of(tag);
+            tagDtoList.add(tagDto);
+        }*/
+
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
         PostDto postDto = PostDto.of(post);
         postDto.setPhotoDtoList(photoDtoList);
+        //postDto.setTags(tagDtoList);
 
         return postDto;
     }
@@ -108,18 +139,23 @@ public class PostService {
     public Long update(
             Long id,
             PostDto postDto,
+            List<String> tags,
             List<MultipartFile> files
     ) throws Exception {
 
         //상품 수정
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
         post.updatePost(postDto);
 
         //이미지 등록
         for(int i=0; i<files.size(); i++) {
             photoService.updatePhoto(id, files.get(i));
         }
+
+        //태그 등록
+        tagService.saveTag(tags);
 
         return post.getId();
     }

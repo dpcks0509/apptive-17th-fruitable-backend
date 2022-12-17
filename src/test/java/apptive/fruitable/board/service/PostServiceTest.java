@@ -62,7 +62,7 @@ public class PostServiceTest {
         return multipartFileList;
     }
 
-    @Test
+    /*@Test
     public void 상품등록() throws Exception {
 
         MemberDto member = new MemberDto(3L,
@@ -91,5 +91,5 @@ public class PostServiceTest {
         assertEquals(postDto.getPrice(), post.getPrice());
         assertEquals(postDto.getTitle(), post.getTitle());
         System.out.println(post.getUserId().getEmail());
-    }
+    }*/
 }

@@ -1,16 +1,16 @@
 package apptive.fruitable.board.domain.post;
 
+import apptive.fruitable.board.domain.tag.Tag;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.login.entity.MemberEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @NoArgsConstructor
@@ -48,6 +48,13 @@ public class Post {
             orphanRemoval = true
     )
     private List<Photo> photo = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "post",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     /*@Builder
     public Post(String userId, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate, Long fileId) {

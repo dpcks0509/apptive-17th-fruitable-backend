@@ -11,16 +11,15 @@ import org.springframework.stereotype.Component;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter
+@Setter
 @Component
-public class PostDto {
+public class PostRequestDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,28 +38,15 @@ public class PostDto {
     private Integer price;
     private LocalDateTime endDate;
 
-    private List<PhotoDto> photoDtoList = new ArrayList<>();
-    private List<TagDto> tags = new ArrayList<>();
-
     private static ModelMapper modelMapper = new ModelMapper();
-
-    /*@Builder
-    public PostDto(MemberEntity member, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate) {
-        this.member = member;
-        this.contact = contact;
-        this.vege = vege;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.endDate = endDate;
-    }*/
 
     public Post createPost() {
         return modelMapper.map(this, Post.class);
     }
 
-    public static PostDto of(Post post) {
-        return modelMapper.map(post, PostDto.class);
+    public static PostRequestDto of(Post post) {
+        return modelMapper.map(post, PostRequestDto.class);
     }
 
 }
+

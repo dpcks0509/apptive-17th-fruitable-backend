@@ -52,7 +52,7 @@ public class PostRepositoryTest {
         return multipartFileList;
     }
 
-    PostDto createPost() throws Exception {
+    /*PostDto createPost() throws Exception {
 
         MemberEntity memberEntity = new MemberEntity();
         memberEntity.setId(1L);
@@ -115,5 +115,5 @@ public class PostRepositoryTest {
 
         postService.deletePost(postId);
         assertEquals(1, post.getId());
-    }
+    }*/
 }
