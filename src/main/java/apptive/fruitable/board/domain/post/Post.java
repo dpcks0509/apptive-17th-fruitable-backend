@@ -2,6 +2,7 @@ package apptive.fruitable.board.domain.post;
 
 import apptive.fruitable.board.domain.tag.Tag;
 import apptive.fruitable.board.dto.PostDto;
+import apptive.fruitable.converter.StringListConverter;
 import apptive.fruitable.login.entity.MemberEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -41,13 +42,9 @@ public class Post {
     @Column(nullable = false)
     private Integer price;
     private LocalDateTime endDate;
-
-    @OneToMany(
-            mappedBy = "post",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            orphanRemoval = true
-    )
-    private List<Photo> photo = new ArrayList<>();
+    @Column
+    @Convert(converter = StringListConverter.class)
+    private List<String> filePath;
 
     @OneToMany(
             mappedBy = "post",
@@ -55,17 +52,6 @@ public class Post {
             orphanRemoval = true
     )
     private List<Tag> tags = new ArrayList<>();
-
-    /*@Builder
-    public Post(String userId, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate, Long fileId) {
-        this.userId = userId;
-        this.contact = contact;
-        this.vege = vege;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.endDate = endDate;
-    }*/
 
     public void updatePost(PostDto postDto) {
         this.userId = postDto.getUserId();
@@ -75,15 +61,6 @@ public class Post {
         this.content =  postDto.getContent();
         this.price = postDto.getPrice();
         this.endDate = postDto.getEndDate();
-    }
-
-    //Post에서 파일 처리 위함
-    public void addPhoto(Photo photo) {
-        this.photo.add(photo);
-
-        //게시글에 파일이 저장되어 있지 않은 경우
-        if(photo.getPost() != this)
-            //파일 저장
-            photo.setPost(this);
+        this.filePath = postDto.getFilePath();
     }
 }
