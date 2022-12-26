@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/fruitable #jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com/fruitable
-    username: sa
+    url: jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable #jdbc:h2:tcp://localhost/~/fruitable
+    username:
     password:
     driver-class-name: org.h2.Driver #org.mariadb.jdbc.Driver
 
@@ -28,16 +28,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
 
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 100MB
+      max-file-size: 10MB
+      max-request-size: 50MB
       enabled: true
-
-
     properties:
       hibernate:
         format_sql: true
@@ -45,6 +43,10 @@ spring:
 
 logging:
   level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: ERROR
     org.hibernate.sql: debug
 #   org.hibernate.type: trace
 
@@ -61,9 +63,6 @@ cloud:
     stack:
       auto: false
 
-img:
-  location: /Users/hjhwang/Projects/Spring/apptive-17th-fruitable-backend-main/img #상품 이미지 업로드 경로
-  uploadPath: file:///Users/hjhwang/Projects/Spring/ #리소스 업로드 경로
 
 #springdoc swagger
 springdoc:

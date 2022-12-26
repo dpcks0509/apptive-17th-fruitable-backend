@@ -10,6 +10,10 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @EnableJpaAuditing
 public class FruitableApplication {
 
+    static {
+        System.setProperty("com.amazone.sdk.disableEc2Metadata", "true");
+    }
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(FruitableApplication.class, args);
     }

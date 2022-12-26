@@ -1,21 +1,20 @@
 package apptive.fruitable.board.controller;
 
-import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.dto.PostRequestDto;
-import apptive.fruitable.board.service.PhotoService;
+import apptive.fruitable.board.handler.S3Uploader;
 import apptive.fruitable.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "post controller")
@@ -25,7 +24,6 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final PhotoService photoService;
 
     /**
      * postDtoList를 "board/list"에 postList로 전달
@@ -39,15 +37,6 @@ public class PostController {
 
         return postService.getPostList();
     }
-
-    /**
-     * 글쓰는 페이지로 이동
-     */
-    /*@GetMapping("/{postId}")
-    public PostDto getPostByUserId(@PathVariable Long postId) {
-
-        return postService.getPost(postId);
-    }*/
 
     /**
      * Post로 받은 데이터를 데이터베이스에 추가
@@ -87,20 +76,6 @@ public class PostController {
     }
 
     /**
-     * id에 해당하는 게시글을 수정할 수 있음
-     * @param id
-     * @param model
-     * @return put 형식으로 /post/edit/{id}로 서버에 요청 감
-     */
-    /*@GetMapping("/post/edit/{id}")
-    public String edit(@PathVariable("id") Long id, Model model) {
-
-        PostDto postDto = postService.getPost(id);
-        model.addAttribute("post", postDto);
-        return "board/edit";
-    }*/
-
-    /**
      * 서버에 put 요청이 오면, 데이터베이스에 변경된 데이터를 저장함
      */
     @Operation(
@@ -114,7 +89,7 @@ public class PostController {
                          List<String> tags,
                          BindingResult bindingResult,
                          @RequestParam("photoFile") List<MultipartFile> photoFileList,
-                         Model model) throws Exception {
+                         Model model) {
 
         if(bindingResult.hasErrors()) return;
 
@@ -125,7 +100,7 @@ public class PostController {
 
         try {
             postService.update(postId, postDto, tags, photoFileList);
-        } catch (Exception e) {
+        } catch (IOException e) {
             model.addAttribute("errorMessage", "상품 수정 중 에러가 발생했습니다.");
         }
     }

@@ -39,7 +39,7 @@ public class PostDto {
     private Integer price;
     private LocalDateTime endDate;
 
-    private List<PhotoDto> photoDtoList = new ArrayList<>();
+    private List<String> filePath = new ArrayList<>();
     private List<TagDto> tags = new ArrayList<>();
 
     private static ModelMapper modelMapper = new ModelMapper();

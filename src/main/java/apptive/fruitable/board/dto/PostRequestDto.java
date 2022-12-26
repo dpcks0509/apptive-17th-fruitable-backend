@@ -1,7 +1,6 @@
 package apptive.fruitable.board.dto;
 
 import apptive.fruitable.board.domain.post.Post;
-import apptive.fruitable.board.domain.tag.Tag;
 import apptive.fruitable.login.entity.MemberEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
