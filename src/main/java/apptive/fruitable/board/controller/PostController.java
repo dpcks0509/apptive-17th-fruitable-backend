@@ -2,7 +2,6 @@ package apptive.fruitable.board.controller;
 
 import apptive.fruitable.board.dto.PostDto;
 import apptive.fruitable.board.dto.PostRequestDto;
-import apptive.fruitable.board.handler.S3Uploader;
 import apptive.fruitable.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
