@@ -22,7 +22,6 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final TagService tagService;
     private final S3Uploader s3Uploader;
 
     /**
@@ -31,34 +30,16 @@ public class PostService {
      */
     @Transactional
     public Long savePost(PostRequestDto requestDto,
-                         List<String> tags,
                          List<MultipartFile> files) throws Exception {
 
-        //System.out.println(postDto.getTitle());
-        //상품 등록
         Post post = new Post();
-        //System.out.println(post.getTitle());
-        PostDto postDto = new PostDto();
-
-        postDto.setId(requestDto.getId());
-        postDto.setUserId(requestDto.getUserId());
-        postDto.setContact(requestDto.getContact());
-        postDto.setVege(requestDto.getVege());
-        postDto.setTitle(requestDto.getTitle());
-        postDto.setTitle(requestDto.getTitle());
-        postDto.setPrice(requestDto.getPrice());
-        postDto.setEndDate(requestDto.getEndDate());
+        post.updatePost(requestDto);
 
         //이미지 등록
         List<String> filePath = s3Uploader.uploadFiles(files);
-        postDto.setFilePath(filePath);
-
-        post.updatePost(postDto);
+        post.setFilePath(filePath);
 
         postRepository.save(post);
-
-        //태그 저장
-        tagService.saveTag(tags);
 
         return post.getId();
     }
@@ -70,7 +51,7 @@ public class PostService {
         List<Post> postList = postRepository.findAll();
         List<PostDto> postDtoList = new ArrayList<>();
 
-        for(Post post : postList) {
+        for (Post post : postList) {
 
             PostDto postDto = PostDto.of(post);
 
@@ -98,24 +79,14 @@ public class PostService {
     public void deletePost(Long id) {
 
         Post post = postRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
-
-        if(post.getFilePath() != null) {
-            List<String> filePath = post.getFilePath();
-
-            for(String path : filePath) {
-
-                s3Uploader.deleteFile(path);
-            }
-        }
-        postRepository.delete(post);
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        postRepository.deleteById(id);
     }
 
     @Transactional
     public Long update(
             Long id,
-            PostDto postDto,
-            List<String> tags,
+            PostRequestDto requestDto,
             List<MultipartFile> files
     ) throws IOException {
 
@@ -123,21 +94,11 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        //이미지 등록
-        if(post.getFilePath() != null) {
-            List<String> filePath = post.getFilePath();
-
-            for(String path : filePath) {
-
-                s3Uploader.deleteFile(path);
-            }
-        }
         List<String> filePath = s3Uploader.uploadFiles(files);
-        postDto.setFilePath(filePath);
-        post.updatePost(postDto);
+        post.setFilePath(filePath);
+        post.updatePost(requestDto);
 
-        //태그 등록
-        tagService.saveTag(tags);
+        postRepository.save(post);
 
         return post.getId();
     }

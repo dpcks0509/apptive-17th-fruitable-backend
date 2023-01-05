@@ -6,9 +6,10 @@ import apptive.fruitable.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
+@Slf4j
 public class PostController {
 
     private final PostService postService;
@@ -45,18 +47,18 @@ public class PostController {
             summary = "게시글 작성 api",
             description = "게시글 작성"
     )
-    @PostMapping("")
+    @PostMapping(value = "",
+            consumes = {MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    public Long write(@Valid PostRequestDto requestDto,
-                      List<String> tags,
-                      Model model,
-                      @RequestParam("photoFile") List<MultipartFile> photoFileList) throws Exception {
+    public Long write(@Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
+                      @RequestPart(value = "images") List<MultipartFile> photoFileList
+                      ) throws Exception {
 
-        if(photoFileList.get(0).isEmpty() && requestDto.getId() == null) {
-            model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 입력 값 입니다.");
-        }
+        System.out.println(requestDto.getContent());
+        System.out.println(requestDto.getTags());
 
-        return postService.savePost(requestDto, tags, photoFileList);
+        return postService.savePost(requestDto, photoFileList);
     }
 
     /**
@@ -83,24 +85,19 @@ public class PostController {
     )
     @PutMapping("/{postId}")
     @CrossOrigin
-    public void update(@PathVariable Long postId,
-                         PostDto postDto,
-                         List<String> tags,
-                         BindingResult bindingResult,
-                         @RequestParam("photoFile") List<MultipartFile> photoFileList,
-                         Model model) {
+    public ResponseEntity<?> update(@PathVariable Long postId,
+                                    @Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
+                                    @RequestPart(value = "images") List<MultipartFile> photoFileList) {
 
-        if(bindingResult.hasErrors()) return;
-
-        if(photoFileList.get(0).isEmpty() && postId == null) {
-            model.addAttribute("errorMessage", "첫번재 상품 이미지는 필수 입력값 입니다.");
-            return;
+        if(postId == null) {
+            return new ResponseEntity<>("게시글이 존재하는지 확인해주세요.", HttpStatus.BAD_REQUEST);
         }
 
         try {
-            postService.update(postId, postDto, tags, photoFileList);
+            postService.update(postId, requestDto, photoFileList);
+            return new ResponseEntity<>("업데이트에 성공했습니다.", HttpStatus.OK);
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "상품 수정 중 에러가 발생했습니다.");
+            return new ResponseEntity<>("게시글 업데이트에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 

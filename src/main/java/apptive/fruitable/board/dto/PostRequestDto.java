@@ -5,23 +5,19 @@ import apptive.fruitable.login.entity.MemberEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @Component
 public class PostRequestDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
     private MemberEntity userId;
 
     @NotBlank(message = "연락처를 입력해 주세요")
@@ -34,11 +30,16 @@ public class PostRequestDto {
     private String content;
     @NotNull(message = "가격을 입력해주세요")
     private Integer price;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime endDate;
+    private List<String> tags;
 
     private static ModelMapper modelMapper = new ModelMapper();
 
     public Post createPost() {
+        /*modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true);*/
         return modelMapper.map(this, Post.class);
     }
 
