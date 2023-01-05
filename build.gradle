@@ -6,7 +6,7 @@ plugins {
 
 group = 'apptive'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '11.0.17'
 
 configurations {
     compileOnly {
@@ -24,9 +24,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'commons-io:commons-io:2.11.0'
+    implementation 'commons-fileupload:commons-fileupload:1.4'
     implementation 'org.modelmapper:modelmapper:3.1.1'
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
-    //implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     //swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
