@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
@@ -17,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@ModelAttribute MemberDto memberDto) {
+    public ResponseEntity<?> save(@RequestBody MemberDto memberDto) {
 
         if (!(memberDto.getPwd().equals(memberDto.getPwd2()))) {
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.BAD_REQUEST);
@@ -27,7 +30,8 @@ public class MemberController {
     }
 
     @GetMapping("/nameDuplicate")
-    public ResponseEntity<?> nameDuplicate(@ModelAttribute MemberDto memberDto) {
+    public ResponseEntity<?> nameDuplicate(@RequestBody MemberDto memberDto) {
+
         if (memberService.nameDuplicate(memberDto.getName())) {
             return new ResponseEntity<>("닉네임 중복", HttpStatus.BAD_REQUEST);
         }
@@ -35,15 +39,40 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<?> login(@ModelAttribute MemberDto memberDto, HttpSession session) {
+    public ResponseEntity<?> login(@RequestBody MemberDto memberDto, HttpServletResponse response) {
         MemberDto loginResult = memberService.login(memberDto);
 
         if (loginResult != null) {
-            session.setAttribute("id", loginResult.getId());
-            session.setAttribute("email", loginResult.getEmail());
-            session.setAttribute("name", loginResult.getName());
-            session.setAttribute("pwd", loginResult.getPwd());
-            session.setAttribute("role", loginResult.getRole());
+
+            Cookie cookieId = new Cookie("id", String.valueOf(loginResult.getId()));
+            Cookie cookieEmail = new Cookie("email", loginResult.getEmail());
+            Cookie cookiePwd = new Cookie("pwd", loginResult.getPwd());
+            Cookie cookieName = new Cookie("name", loginResult.getName());
+            Cookie cookieRole = new Cookie("role", loginResult.getRole());
+            Cookie cookieDate = new Cookie("date", loginResult.getDate());
+
+            // 쿠키 로그인 유효기간 30일
+            cookieId.setMaxAge(60 * 60 * 24 * 30);
+            cookieEmail.setMaxAge(60 * 60 * 24 * 30);
+            cookiePwd.setMaxAge(60 * 60 * 24 * 30);
+            cookieName.setMaxAge(60 * 60 * 24 * 30);
+            cookieRole.setMaxAge(60 * 60 * 24 * 30);
+            cookieDate.setMaxAge(60 * 60 * 24 * 30);
+
+            cookieId.setPath("/");
+            cookieEmail.setPath("/");
+            cookiePwd.setPath("/");
+            cookieName.setPath("/");
+            cookieRole.setPath("/");
+            cookieDate.setPath("/");
+
+            response.addCookie(cookieId);
+            response.addCookie(cookieEmail);
+            response.addCookie(cookieName);
+            response.addCookie(cookiePwd);
+            response.addCookie(cookieRole);
+            response.addCookie(cookieDate);
+
             return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("로그인 실패", HttpStatus.BAD_REQUEST);
@@ -51,21 +80,74 @@ public class MemberController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        session.invalidate();
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        Cookie cookieId = new Cookie("id", null);
+        Cookie cookieEmail = new Cookie("email", null);
+        Cookie cookiePwd = new Cookie("pwd", null);
+        Cookie cookieName = new Cookie("name", null);
+        Cookie cookieRole = new Cookie("role", null);
+        Cookie cookieDate = new Cookie("date", null);
+
+        cookieId.setMaxAge(0);
+        cookieEmail.setMaxAge(0);
+        cookiePwd.setMaxAge(0);
+        cookieName.setMaxAge(0);
+        cookieRole.setMaxAge(0);
+        cookieDate.setMaxAge(0);
+
+        response.addCookie(cookieId);
+        response.addCookie(cookieEmail);
+        response.addCookie(cookiePwd);
+        response.addCookie(cookieName);
+        response.addCookie(cookieRole);
+        response.addCookie(cookieDate);
+
         return new ResponseEntity<>("로그아웃 완료", HttpStatus.OK);
     }
 
     // 비밀번호, 비밀번호2 재확인 후 일치하면 회원 탈퇴
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@ModelAttribute MemberDto deleteMember, HttpSession session) throws Exception {
+    public ResponseEntity<?> delete(@RequestBody MemberDto deleteMember,
+                                    HttpServletResponse response, HttpServletRequest request) throws Exception {
 
-        String sessionEmail = (String) session.getAttribute("email");
-        String sessionPwd = (String) session.getAttribute("pwd");
+        String cookieEmail = "";
+        String cookiePwd = "";
 
-        if ((deleteMember.getPwd().equals(deleteMember.getPwd2())) && (deleteMember.getPwd().equals(sessionPwd))) {
-            memberService.delete(sessionEmail);
-            session.invalidate();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("email"))
+                    cookieEmail = cookie.getValue();
+                else if (cookie.getName().equals("pwd"))
+                    cookiePwd = cookie.getValue();
+            }
+        }
+
+        if ((deleteMember.getPwd().equals(deleteMember.getPwd2())) && (deleteMember.getPwd().equals(cookiePwd))) {
+            memberService.delete(cookieEmail);
+
+            Cookie deleteId = new Cookie("id", null);
+            Cookie deleteEmail = new Cookie("email", null);
+            Cookie deletePwd = new Cookie("pwd", null);
+            Cookie deleteName = new Cookie("name", null);
+            Cookie deleteRole = new Cookie("role", null);
+            Cookie deleteDate = new Cookie("date", null);
+
+            deleteId.setMaxAge(0);
+            deleteEmail.setMaxAge(0);
+            deletePwd.setMaxAge(0);
+            deleteName.setMaxAge(0);
+            deleteRole.setMaxAge(0);
+            deleteDate.setMaxAge(0);
+
+            response.addCookie(deleteId);
+            response.addCookie(deleteEmail);
+            response.addCookie(deletePwd);
+            response.addCookie(deleteName);
+            response.addCookie(deleteRole);
+            response.addCookie(deleteDate);
+
             return new ResponseEntity<>("탈퇴 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.BAD_REQUEST);
@@ -73,19 +155,40 @@ public class MemberController {
     }
 
     @PutMapping("/updateName")
-    public ResponseEntity<?> updateName(@ModelAttribute MemberDto updateMember, HttpSession session) {
+    public ResponseEntity<?> updateName(@RequestBody MemberDto updateMember,
+                                        HttpServletResponse response, HttpServletRequest request) {
 
-        Long sessionId = (Long) session.getAttribute("id");
-        String sessionEmail = (String) session.getAttribute("email");
-        String sessionPwd = (String) session.getAttribute("pwd");
-        String updateNewName = updateMember.getNewName();
-        int sessionRole = (int) session.getAttribute("role");
+        Long cookieId = 0L;
+        String cookieEmail = "";
+        String cookiePwd = "";
+        String updateName = updateMember.getNewName();
+        String cookieRole = "";
+        String cookieDate = "";
 
-        MemberDto memberDto = new MemberDto(sessionId, sessionEmail, sessionPwd, updateNewName, sessionRole);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("id"))
+                    cookieId = Long.valueOf(cookie.getValue());
+                else if (cookie.getName().equals("email"))
+                    cookieEmail = cookie.getValue();
+                else if (cookie.getName().equals("pwd"))
+                    cookiePwd = cookie.getValue();
+                else if (cookie.getName().equals("role"))
+                    cookieRole = cookie.getValue();
+                else if (cookie.getName().equals("date"))
+                    cookieDate = cookie.getValue();
+            }
+        }
+
+        MemberDto memberDto = new MemberDto(cookieId, cookieEmail, cookiePwd, updateName, cookieRole, cookieDate);
 
         if (!memberService.nameDuplicate(updateMember.getNewName())) {
             memberService.updateName(memberDto);
-            session.setAttribute("name",updateMember.getNewName());
+            Cookie cookieNewName = new Cookie("name", updateName);
+            cookieNewName.setMaxAge(60 * 60 * 24 * 30);
+            cookieNewName.setPath("/");
+            response.addCookie(cookieNewName);
             return new ResponseEntity<>("닉네임 수정 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("닉네임 중복", HttpStatus.BAD_REQUEST);
@@ -93,20 +196,43 @@ public class MemberController {
     }
 
     @PutMapping("/updatePwd")
-    public ResponseEntity<?> updatePwd(@ModelAttribute MemberDto updateMember, HttpSession session) {
+    public ResponseEntity<?> updatePwd(@RequestBody MemberDto updateMember,
+                                       HttpServletResponse response, HttpServletRequest request) {
 
-        Long sessionId = (Long) session.getAttribute("id");
-        String sessionEmail = (String) session.getAttribute("email");
-        String sessionPwd = (String) session.getAttribute("pwd");
-        String updateNewPwd = updateMember.getNewPwd();
-        String sessionName = (String) session.getAttribute("name");
-        int sessionRole = (int) session.getAttribute("role");
+        Long cookieId = 0L;
+        String cookieEmail = "";
+        String cookiePwd = "";
+        String updatePwd = updateMember.getNewPwd();
+        String cookieName = "";
+        String cookieRole = "";
+        String cookieDate = "";
 
-        MemberDto memberDto = new MemberDto(sessionId, sessionEmail, updateNewPwd, sessionName, sessionRole);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("id"))
+                    cookieId = Long.valueOf(cookie.getValue());
+                else if (cookie.getName().equals("email"))
+                    cookieEmail = cookie.getValue();
+                else if (cookie.getName().equals("pwd"))
+                    cookiePwd = cookie.getValue();
+                else if (cookie.getName().equals("name"))
+                    cookieName = cookie.getValue();
+                else if (cookie.getName().equals("role"))
+                    cookieRole = cookie.getValue();
+                else if (cookie.getName().equals("date"))
+                    cookieDate = cookie.getValue();
+            }
+        }
 
-        if ((updateMember.getPwd().equals(sessionPwd) && (updateMember.getNewPwd().equals(updateMember.getNewPwd2())))) {
+        MemberDto memberDto = new MemberDto(cookieId, cookieEmail, updatePwd, cookieName, cookieRole, cookieDate);
+
+        if ((updateMember.getPwd().equals(cookiePwd) && (updateMember.getNewPwd().equals(updateMember.getNewPwd2())))) {
             memberService.updatePwd(memberDto);
-            session.setAttribute("pwd",updateMember.getNewPwd());
+            Cookie cookieNewPwd = new Cookie("pwd", updatePwd);
+            cookieNewPwd.setMaxAge(60 * 60 * 24 * 30);
+            cookieNewPwd.setPath("/");
+            response.addCookie(cookieNewPwd);
             return new ResponseEntity<>("비밀번호 수정 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.BAD_REQUEST);
