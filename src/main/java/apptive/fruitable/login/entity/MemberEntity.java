@@ -3,6 +3,7 @@ package apptive.fruitable.login.entity;
 import apptive.fruitable.login.dto.MemberDto;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
@@ -32,7 +33,10 @@ public class MemberEntity {
     private String name;
 
     @Column(nullable = true)
-    private int role; // (기본값)1 = 구매자, 2 = 판매자(이메일 확인 후 변경)
+    private String role; // 기본값 = "Buyer", 판매자 등업시 "Seller"
+
+    @Column(nullable = true)
+    private String date;
 
     public static MemberEntity toSaveEntity(MemberDto memberDto) {
         MemberEntity memberEntity = new MemberEntity();
@@ -40,6 +44,7 @@ public class MemberEntity {
         memberEntity.setPwd(memberDto.getPwd());
         memberEntity.setName(memberDto.getName());
         memberEntity.setRole(memberDto.getRole());
+        memberEntity.setDate(memberDto.getDate());
         return memberEntity;
     }
 
@@ -50,6 +55,7 @@ public class MemberEntity {
         memberEntity.setPwd(memberDto.getPwd());
         memberEntity.setName(memberDto.getName());
         memberEntity.setRole(memberDto.getRole());
+        memberEntity.setDate(memberDto.getDate());
         return memberEntity;
     }
 
@@ -60,6 +66,7 @@ public class MemberEntity {
         memberEntity.setPwd(memberDto.getPwd());
         memberEntity.setName(memberDto.getName());
         memberEntity.setRole(memberDto.getRole());
+        memberEntity.setDate(memberDto.getDate());
         return memberEntity;
     }
 }

@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 @Data
 @NoArgsConstructor
@@ -19,14 +22,19 @@ public class MemberDto {
     private String newPwd2; // 새 비밀번호 재확인
     private String name;
     private String newName; // 새 닉네임
-    private int role = 1; // 역할 기본값(판매자, 구매자 동일) -> 판매자 이메일 승인시 role=2로 판매자 전환
+    private String role = "Buyer"; // 역할 기본값(구매자) -> 판매자 이메일 승인시 role="Seller"로 판매자 전환
 
-    public MemberDto(Long id, String email, String pwd, String name, int role) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+    Date now = new Date();
+    private String date = dateFormat.format(now);
+
+    public MemberDto(Long id, String email, String pwd, String name, String role, String date) {
         this.id = id;
         this.email = email;
         this.pwd = pwd;
         this.name = name;
         this.role = role;
+        this.date = date;
     }
 
     public static MemberDto toMemberDto(MemberEntity memberEntity) {
@@ -41,6 +49,7 @@ public class MemberDto {
         memberDto.setName(memberEntity.getName());
         memberDto.setNewName(memberDto.getNewName());
         memberDto.setRole(memberEntity.getRole());
+        memberDto.setDate(memberEntity.getDate());
         return memberDto;
     }
 }
