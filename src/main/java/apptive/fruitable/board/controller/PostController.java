@@ -1,31 +1,38 @@
 package apptive.fruitable.board.controller;
 
-import apptive.fruitable.board.domain.post.Post;
 import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.service.PhotoService;
+import apptive.fruitable.board.dto.PostRequestDto;
 import apptive.fruitable.board.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
+@Tag(name = "post controller")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
+@Slf4j
 public class PostController {
 
     private final PostService postService;
-    private final PhotoService photoService;
 
     /**
      * postDtoList를 "board/list"에 postList로 전달
      */
+    @Operation(
+            summary = "post list api",
+            description = "전체 게시글 리스트 가져오기"
+    )
     @GetMapping("")
     public List<PostDto> list() {
 
@@ -33,28 +40,25 @@ public class PostController {
     }
 
     /**
-     * 글쓰는 페이지로 이동
-     */
-    /*@GetMapping("/{postId}")
-    public PostDto getPostByUserId(@PathVariable Long postId) {
-
-        return postService.getPost(postId);
-    }*/
-
-    /**
      * Post로 받은 데이터를 데이터베이스에 추가
      * @return 원래 화면
      */
-    @PostMapping("")
+    @Operation(
+            summary = "게시글 작성 api",
+            description = "게시글 작성"
+    )
+    @PostMapping(value = "",
+            consumes = {MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    public Long write(@Valid PostDto postDto, Model model,
-                      @RequestParam("photoFile") List<MultipartFile> photoFileList) throws Exception {
+    public Long write(@Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
+                      @RequestPart(value = "images") List<MultipartFile> photoFileList
+                      ) throws Exception {
 
-        if(photoFileList.get(0).isEmpty() && postDto.getId() == null) {
-            model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 입력 값 입니다.");
-        }
+        System.out.println(requestDto.getContent());
+        System.out.println(requestDto.getTags());
 
-        return postService.savePost(postDto, photoFileList);
+        return postService.savePost(requestDto, photoFileList);
     }
 
     /**
@@ -62,6 +66,10 @@ public class PostController {
      * @param postId
      * @return postId 에 해당하는 postDto 객체 전체
      */
+    @Operation(
+            summary = "상세게시글 api",
+            description = "상세 게시글 확인 가능"
+    )
     @GetMapping("/{postId}")
     public PostDto detail(@PathVariable Long postId) {
 
@@ -69,44 +77,34 @@ public class PostController {
     }
 
     /**
-     * id에 해당하는 게시글을 수정할 수 있음
-     * @param id
-     * @param model
-     * @return put 형식으로 /post/edit/{id}로 서버에 요청 감
-     */
-    /*@GetMapping("/post/edit/{id}")
-    public String edit(@PathVariable("id") Long id, Model model) {
-
-        PostDto postDto = postService.getPost(id);
-        model.addAttribute("post", postDto);
-        return "board/edit";
-    }*/
-
-    /**
      * 서버에 put 요청이 오면, 데이터베이스에 변경된 데이터를 저장함
      */
+    @Operation(
+            summary = "게시글 업데이트",
+            description = "게시글 업데이트"
+    )
     @PutMapping("/{postId}")
     @CrossOrigin
-    public void update(@PathVariable Long postId,
-                         PostDto postDto,
-                         BindingResult bindingResult,
-                         @RequestParam("photoFile") List<MultipartFile> photoFileList,
-                         Model model) throws Exception {
+    public ResponseEntity<?> update(@PathVariable Long postId,
+                                    @Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
+                                    @RequestPart(value = "images") List<MultipartFile> photoFileList) {
 
-        if(bindingResult.hasErrors()) return;
-
-        if(photoFileList.get(0).isEmpty() && postId == null) {
-            model.addAttribute("errorMessage", "첫번재 상품 이미지는 필수 입력값 입니다.");
-            return;
+        if(postId == null) {
+            return new ResponseEntity<>("게시글이 존재하는지 확인해주세요.", HttpStatus.BAD_REQUEST);
         }
 
         try {
-            postService.update(postId, postDto, photoFileList);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "상품 수정 중 에러가 발생했습니다.");
+            postService.update(postId, requestDto, photoFileList);
+            return new ResponseEntity<>("업데이트에 성공했습니다.", HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("게시글 업데이트에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
+    @Operation(
+            summary = "delete api",
+            description = "삭제 api"
+    )
     @DeleteMapping("/{postId}")
     public void delete(@PathVariable("postId") Long postId) {
 
