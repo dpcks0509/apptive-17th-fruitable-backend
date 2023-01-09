@@ -7,10 +7,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -40,8 +39,7 @@ public class Post {
     private String content;
     @Column(nullable = false)
     private Integer price;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @Convert(converter = StringListConverter.class)
     private List<String> tags;
 

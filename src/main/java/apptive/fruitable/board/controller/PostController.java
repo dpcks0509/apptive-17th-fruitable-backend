@@ -55,9 +55,6 @@ public class PostController {
                       @RequestPart(value = "images") List<MultipartFile> photoFileList
                       ) throws Exception {
 
-        System.out.println(requestDto.getContent());
-        System.out.println(requestDto.getTags());
-
         return postService.savePost(requestDto, photoFileList);
     }
 
