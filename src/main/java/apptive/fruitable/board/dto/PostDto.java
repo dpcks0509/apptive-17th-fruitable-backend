@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class PostDto {
     private String content;
     @NotNull(message = "가격을 입력해주세요")
     private Integer price;
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     private List<String> tags = new ArrayList<>();
 
     private List<String> filePath = new ArrayList<>();
