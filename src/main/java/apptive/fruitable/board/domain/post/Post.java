@@ -1,30 +1,32 @@
 package apptive.fruitable.board.domain.post;
 
-import apptive.fruitable.board.dto.PostDto;
+import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.converter.StringListConverter;
 import apptive.fruitable.login.entity.MemberEntity;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
-
 
 @Entity
 @NoArgsConstructor
-@Getter
+@Getter @Setter
 @EntityListeners(AutoCloseable.class)
 @Table(name = "post")
 public class Post {
 
-    @Id @Column(name = "post_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
-    //회원 정보 (Userid - 외래키(@Column), contact - 직접 받아옴)
-    //@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     //@JoinColumn(name = "member_id")
-    private String userId;
+    private MemberEntity userId;
     @Column(nullable = false, length = 20)
     private String contact;
 
@@ -37,27 +39,15 @@ public class Post {
     private String content;
     @Column(nullable = false)
     private Integer price;
-    private LocalDateTime endDate;
+    private LocalDate endDate;
+    @Convert(converter = StringListConverter.class)
+    private List<String> tags;
 
-    @OneToMany(
-            mappedBy = "post",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            orphanRemoval = true
-    )
-    private List<Photo> photo = new ArrayList<>();
+    @Column
+    @Convert(converter = StringListConverter.class)
+    private List<String> filePath;
 
-    /*@Builder
-    public Post(String userId, String contact, Integer vege, String title, String content, Integer price, LocalDateTime endDate, Long fileId) {
-        this.userId = userId;
-        this.contact = contact;
-        this.vege = vege;
-        this.title = title;
-        this.content = content;
-        this.price = price;
-        this.endDate = endDate;
-    }*/
-
-    public void updatePost(PostDto postDto) {
+    public void updatePost(PostRequestDto postDto) {
         this.userId = postDto.getUserId();
         this.contact = postDto.getContact();
         this.vege = postDto.getVege();
@@ -65,15 +55,6 @@ public class Post {
         this.content =  postDto.getContent();
         this.price = postDto.getPrice();
         this.endDate = postDto.getEndDate();
-    }
-
-    //Post에서 파일 처리 위함
-    public void addPhoto(Photo photo) {
-        this.photo.add(photo);
-
-        //게시글에 파일이 저장되어 있지 않은 경우
-        if(photo.getPost() != this)
-            //파일 저장
-            photo.setPost(this);
+        this.tags = postDto.getTags();
     }
 }

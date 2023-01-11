@@ -1,12 +1,10 @@
 package apptive.fruitable.board.service;
 
-import apptive.fruitable.board.domain.post.Photo;
 import apptive.fruitable.board.domain.post.Post;
-import apptive.fruitable.board.dto.PhotoDto;
 import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.repository.PhotoRepository;
+import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.handler.S3Uploader;
 import apptive.fruitable.board.repository.PostRepository;
-import apptive.fruitable.login.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,34 +22,24 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final PhotoRepository photoRepository;
-    private final PhotoService photoService;
+    private final S3Uploader s3Uploader;
 
     /**
      * 글쓰기 Form에서 내용을 입력한 뒤, '글쓰기' 버튼을 누르면 Post 형식으로 요청이 오고,
      * PostService의 savePost()를 실행하게 된다.
      */
     @Transactional
-    public Long savePost(PostDto postDto, List<MultipartFile> files) throws Exception {
+    public Long savePost(PostRequestDto requestDto,
+                         List<MultipartFile> files) throws Exception {
 
-        //System.out.println(postDto.getTitle());
-        //상품 등록
         Post post = new Post();
-        post.updatePost(postDto);
-        //System.out.println(post.getTitle());
-        postRepository.save(post);
+        post.updatePost(requestDto);
 
         //이미지 등록
-        for(int i=0; i<files.size(); i++) {
+        List<String> filePath = s3Uploader.uploadFiles(files);
+        post.setFilePath(filePath);
 
-            Photo photo = new Photo();
-            photo.setPost(post);
-
-            if(i==0) photo.setRepImg("Y");
-            else photo.setRepImg("N");
-
-            photoService.saveFile(photo, files.get(i));
-        }
+        postRepository.save(post);
 
         return post.getId();
     }
@@ -63,7 +51,7 @@ public class PostService {
         List<Post> postList = postRepository.findAll();
         List<PostDto> postDtoList = new ArrayList<>();
 
-        for(Post post : postList) {
+        for (Post post : postList) {
 
             PostDto postDto = PostDto.of(post);
 
@@ -80,18 +68,9 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostDto getPost(Long id) {
 
-        List<Photo> photoList = photoRepository.findAllById(Collections.singleton(id));
-        List<PhotoDto> photoDtoList = new ArrayList<>();
-
-        for(Photo photo : photoList) {
-            PhotoDto photoDto = PhotoDto.of(photo);
-            photoDtoList.add(photoDto);
-        }
-
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
         PostDto postDto = PostDto.of(post);
-        postDto.setPhotoDtoList(photoDtoList);
 
         return postDto;
     }
@@ -100,26 +79,26 @@ public class PostService {
     public void deletePost(Long id) {
 
         Post post = postRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
-        postRepository.delete(post);
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        postRepository.deleteById(id);
     }
 
     @Transactional
     public Long update(
             Long id,
-            PostDto postDto,
+            PostRequestDto requestDto,
             List<MultipartFile> files
-    ) throws Exception {
+    ) throws IOException {
 
         //상품 수정
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
-        post.updatePost(postDto);
 
-        //이미지 등록
-        for(int i=0; i<files.size(); i++) {
-            photoService.updatePhoto(id, files.get(i));
-        }
+        List<String> filePath = s3Uploader.uploadFiles(files);
+        post.setFilePath(filePath);
+        post.updatePost(requestDto);
+
+        postRepository.save(post);
 
         return post.getId();
     }

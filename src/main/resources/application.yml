@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/fruitable
-    username: sa
+    url: jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable jdbc:h2:tcp://localhost/~/fruitable
+    username:
     password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.mariadb.jdbc.Driver #org.h2.Driver
 
   # Naver smtp server 사용
   mail:
@@ -27,17 +27,15 @@ spring:
 
   jpa:
     hibernate:
-
       ddl-auto: create
+    #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
 
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 100MB
+      max-file-size: 10MB
+      max-request-size: 50MB
       enabled: true
-
-
     properties:
       hibernate:
         format_sql: true
@@ -45,12 +43,30 @@ spring:
 
 logging:
   level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: ERROR
     org.hibernate.sql: debug
-
 #   org.hibernate.type: trace
 
+cloud:
+  aws:
+    s3:
+      bucket: fruitable-bucket
+    credentials:
+      access-key: AKIA36W7FXMSOMKY4IGK
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
 
-img:
-  location: /Users/hjhwang/Projects/Spring/apptive-17th-fruitable-backend-main/img #상품 이미지 업로드 경로
-  uploadPath: file:///Users/hjhwang/Projects/Spring/ #리소스 업로드 경로
 
+#springdoc swagger
+springdoc:
+  api-docs:
+    enabled: true #false 지정 시 외부 노출 X
+  swagger-ui:
+    enabled: true

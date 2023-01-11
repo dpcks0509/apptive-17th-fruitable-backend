@@ -5,19 +5,18 @@ import apptive.fruitable.login.entity.MemberEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter
+@Setter
 @Component
-public class PostDto {
-
-    private Long id;
+public class PostRequestDto {
 
     private MemberEntity userId;
 
@@ -31,19 +30,22 @@ public class PostDto {
     private String content;
     @NotNull(message = "가격을 입력해주세요")
     private Integer price;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-    private List<String> tags = new ArrayList<>();
-
-    private List<String> filePath = new ArrayList<>();
+    private List<String> tags;
 
     private static ModelMapper modelMapper = new ModelMapper();
 
     public Post createPost() {
+        /*modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true);*/
         return modelMapper.map(this, Post.class);
     }
 
-    public static PostDto of(Post post) {
-        return modelMapper.map(post, PostDto.class);
+    public static PostRequestDto of(Post post) {
+        return modelMapper.map(post, PostRequestDto.class);
     }
 
 }
+
