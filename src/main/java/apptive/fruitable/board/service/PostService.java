@@ -37,7 +37,12 @@ public class PostService {
 
         //이미지 등록
         List<String> filePath = s3Uploader.uploadFiles(files);
+        List<String> fileURL = new ArrayList<>();
+        for (String url : filePath) {
+            fileURL.add(s3Uploader.getFile(url));
+        }
         post.setFilePath(filePath);
+        post.setFileURL(fileURL);
 
         postRepository.save(post);
 
@@ -95,7 +100,15 @@ public class PostService {
                 .orElseThrow(EntityNotFoundException::new);
 
         List<String> filePath = s3Uploader.uploadFiles(files);
+
+        List<String> fileURL = new ArrayList<>();
+        for (String url : filePath) {
+            fileURL.add(s3Uploader.getFile(url));
+        }
+
         post.setFilePath(filePath);
+        post.setFileURL(fileURL);
+
         post.updatePost(requestDto);
 
         postRepository.save(post);

@@ -47,6 +47,10 @@ public class Post {
     @Convert(converter = StringListConverter.class)
     private List<String> filePath;
 
+    @Column
+    @Convert(converter = StringListConverter.class)
+    private List<String> fileURL;
+
     public void updatePost(PostRequestDto postDto) {
         this.userId = postDto.getUserId();
         this.contact = postDto.getContact();
