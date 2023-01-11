@@ -54,6 +54,10 @@ public class S3Uploader {
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
+    public String getFile(String fileName) {
+        return amazonS3.getUrl(bucket, fileName).toString();
+    }
+
     private String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
