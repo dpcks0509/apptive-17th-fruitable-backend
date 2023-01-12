@@ -30,17 +30,18 @@ public class MemberController {
     }
 
     @GetMapping("/nameDuplicate")
-    public ResponseEntity<?> nameDuplicate(@RequestBody MemberDto memberDto) {
+    public ResponseEntity<?> nameDuplicate(@RequestParam("name") String name) {
 
-        if (memberService.nameDuplicate(memberDto.getName())) {
+        if (memberService.nameDuplicate(name)) {
             return new ResponseEntity<>("닉네임 중복", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("닉네임 사용가능", HttpStatus.OK);
     }
 
     @GetMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MemberDto memberDto, HttpServletResponse response) {
-        MemberDto loginResult = memberService.login(memberDto);
+    public ResponseEntity<?> login(@RequestParam("email") String email, @RequestParam("pwd") String pwd,
+                                   HttpServletResponse response) {
+        MemberDto loginResult = memberService.login(email,pwd);
 
         if (loginResult != null) {
 
