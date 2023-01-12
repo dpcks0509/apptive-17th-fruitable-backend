@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable jdbc:h2:tcp://localhost/~/fruitable
+    url: jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable #jdbc:h2:tcp://localhost/~/fruitable
     username:
     password:
     driver-class-name: org.mariadb.jdbc.Driver #org.h2.Driver
@@ -56,7 +56,7 @@ cloud:
       bucket: fruitable-bucket
     credentials:
       access-key: AKIA36W7FXMSOMKY4IGK
-      secret-key: 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
+      secret-key:
     region:
       static: ap-northeast-2
       auto: false

@@ -35,6 +35,7 @@ public class PostDto {
     private List<String> tags = new ArrayList<>();
 
     private List<String> filePath = new ArrayList<>();
+    private List<String> fileURL = new ArrayList<>();
 
     private static ModelMapper modelMapper = new ModelMapper();
 
