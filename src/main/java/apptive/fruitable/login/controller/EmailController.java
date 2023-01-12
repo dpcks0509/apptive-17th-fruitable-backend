@@ -23,12 +23,12 @@ public class EmailController {
 
     // 이메일 중복 확인 + 이메일 인증코드 전송
     @GetMapping("/send")
-    public ResponseEntity<?> emailSend(@RequestBody MemberDto memberDto, HttpServletResponse response) throws MessagingException {
+    public ResponseEntity<?> emailSend(@RequestParam("email") String email, HttpServletResponse response) throws MessagingException {
 
-        if (memberService.emailDuplicate(memberDto.getEmail())) {
+        if (memberService.emailDuplicate(email)) {
             return new ResponseEntity<>("이메일 중복", HttpStatus.BAD_REQUEST);
         } else {
-            String emailCode = emailService.sendEmail(memberDto.getEmail());
+            String emailCode = emailService.sendEmail(email);
 
             Cookie cookieEmailCode = new Cookie("emailCode", emailCode);
             // emailCode 유효기간 3분
@@ -41,7 +41,7 @@ public class EmailController {
 
     // 이메일 인증코드 확인
     @GetMapping("/confirm")
-    public ResponseEntity<?> emailConfirm(@RequestBody MemberDto memberDto,
+    public ResponseEntity<?> emailConfirm(@RequestParam("emailCode") String emailCode,
                                           HttpServletResponse response, HttpServletRequest request) {
 
         String cookieEmailCode = "";
@@ -54,7 +54,7 @@ public class EmailController {
             }
         }
 
-        if (!memberDto.getEmailCode().equals(cookieEmailCode)) {
+        if (!emailCode.equals(cookieEmailCode)) {
             return new ResponseEntity<>("인증번호 불일치", HttpStatus.BAD_REQUEST);
         } else {
             Cookie deleteEmailCode = new Cookie("emailCode", null);

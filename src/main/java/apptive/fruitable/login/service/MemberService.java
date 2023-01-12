@@ -20,7 +20,7 @@ public class MemberService {
         return savedId;
     }
 
-    public MemberDto login(MemberDto memberDto) {
+    public MemberDto login(String email, String pwd) {
         /**
          * login.html에서 아이디, 비번을 받아오고
          * DB로 부터 해당 아이디의 정보를 가져와서
@@ -28,10 +28,10 @@ public class MemberService {
          * 일치하면 로그인 성공, 일치하지 않으면 로그인 실패로 처리
          */
 
-        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByEmail(memberDto.getEmail());
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByEmail(email);
         if (optionalMemberEntity.isPresent()) {
             MemberEntity loginEntity = optionalMemberEntity.get();
-            if (loginEntity.getPwd().equals(memberDto.getPwd())) {
+            if (loginEntity.getPwd().equals(pwd)) {
                 return MemberDto.toMemberDto(loginEntity); // 로그인 성공
             } else {
                 return null; // 비밀번호 틀림
