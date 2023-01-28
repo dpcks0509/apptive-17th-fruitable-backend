@@ -1,7 +1,7 @@
 package apptive.fruitable.board.controller;
 
-import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.dto.post.PostDto;
+import apptive.fruitable.board.dto.post.PostRequestDto;
 import apptive.fruitable.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,10 +52,11 @@ public class PostController {
                     MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public Long write(@Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
-                      @RequestPart(value = "images") List<MultipartFile> photoFileList
+                      @RequestPart(value = "images") List<MultipartFile> photoFileList,
+                      @RequestPart(value = "tags") List<String> contentList
                       ) throws Exception {
 
-        return postService.savePost(requestDto, photoFileList);
+        return postService.savePost(requestDto, photoFileList, contentList);
     }
 
     /**

@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable #jdbc:h2:tcp://localhost/~/fruitable
-    username:
+    url: jdbc:h2:tcp://localhost/~/fruitable #jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable
+    username: sa
     password:
-    driver-class-name: org.mariadb.jdbc.Driver #org.h2.Driver
+    driver-class-name: org.h2.Driver #org.mariadb.jdbc.Driver
 
   # Naver smtp server 사용
   mail:
@@ -55,7 +55,7 @@ cloud:
     s3:
       bucket: fruitable-bucket
     credentials:
-      access-key: AKIA36W7FXMSOMKY4IGK
+      access-key:
       secret-key:
     region:
       static: ap-northeast-2

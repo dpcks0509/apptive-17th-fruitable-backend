@@ -1,8 +1,9 @@
 package apptive.fruitable.board.service;
 
 import apptive.fruitable.board.domain.post.Post;
-import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.domain.tag.Tag;
+import apptive.fruitable.board.dto.post.PostDto;
+import apptive.fruitable.board.dto.post.PostRequestDto;
 import apptive.fruitable.board.handler.S3Uploader;
 import apptive.fruitable.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final TagService tagService;
     private final S3Uploader s3Uploader;
 
     /**
@@ -30,10 +32,15 @@ public class PostService {
      */
     @Transactional
     public Long savePost(PostRequestDto requestDto,
-                         List<MultipartFile> files) throws Exception {
+                         List<MultipartFile> files,
+                         List<String> contentList) throws Exception {
 
         Post post = new Post();
         post.updatePost(requestDto);
+
+        //태그 등록
+        List<String> tagList = tagService.saveTag(post, contentList);
+        post.setTagList(tagList);
 
         //이미지 등록
         List<String> filePath = s3Uploader.uploadFiles(files);
