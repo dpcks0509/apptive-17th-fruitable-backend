@@ -57,9 +57,9 @@ public class EmailController {
         if (!emailCode.equals(cookieEmailCode)) {
             return new ResponseEntity<>("인증번호 불일치", HttpStatus.BAD_REQUEST);
         } else {
-            Cookie deleteEmailCode = new Cookie("emailCode", null);
-            deleteEmailCode.setMaxAge(0);
-            response.addCookie(deleteEmailCode);
+//            Cookie deleteEmailCode = new Cookie("emailCode", null);
+//            deleteEmailCode.setMaxAge(0);
+//            response.addCookie(deleteEmailCode);
             return new ResponseEntity<>("인증번호 일치", HttpStatus.OK);
         }
     }
