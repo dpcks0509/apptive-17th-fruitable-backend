@@ -8,6 +8,7 @@ import apptive.fruitable.board.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class TagService {
 
     private final TagRepository tagRepository;
 
+    @Transactional
     public List<String> saveTag(Post post, List<String> contentList) {
 
         List<String> tagList = new ArrayList<>();
@@ -38,5 +40,10 @@ public class TagService {
         }
 
         return tagList;
+    }
+
+    public void deleteTag(Post post) {
+
+        tagRepository.deleteAllByPost(post);
     }
 }
