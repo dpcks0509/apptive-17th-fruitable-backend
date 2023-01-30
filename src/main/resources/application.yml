@@ -1,16 +1,16 @@
 spring:
   datasource:
-    url: jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable #jdbc:h2:tcp://localhost/~/fruitable
-    username:
+    url: jdbc:h2:tcp://localhost/~/fruitable #jdbc:mariadb://fruitable.cvjiwbuuly4r.ap-northeast-2.rds.amazonaws.com:3306/fruitable
+    username: sa #
     password:
-    driver-class-name: org.mariadb.jdbc.Driver #org.h2.Driver
+    driver-class-name: org.h2.Driver #org.mariadb.jdbc.Driver
 
   # Naver smtp server 사용
   mail:
     host: smtp.naver.com #smtp 서버 주소
     port: 465 # 메일 인증서버 포트
     username: emailauthentication@naver.com #네이버 아이디
-    password:  #네이버 비밀번호
+    password: #네이버 비밀번호
     properties:
       mail:
         smtp:
