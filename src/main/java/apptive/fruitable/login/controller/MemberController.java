@@ -1,6 +1,11 @@
 package apptive.fruitable.login.controller;
 
+import apptive.fruitable.board.domain.post.Post;
+import apptive.fruitable.board.repository.PostRepository;
+import apptive.fruitable.board.service.PostService;
 import apptive.fruitable.login.dto.MemberDto;
+import apptive.fruitable.login.entity.MemberEntity;
+import apptive.fruitable.login.repository.MemberRepository;
 import apptive.fruitable.login.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -18,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody MemberDto memberDto) {
@@ -41,7 +50,7 @@ public class MemberController {
     @GetMapping("/login")
     public ResponseEntity<?> login(@RequestParam("email") String email, @RequestParam("pwd") String pwd,
                                    HttpServletResponse response) {
-        MemberDto loginResult = memberService.login(email,pwd);
+        MemberDto loginResult = memberService.login(email, pwd);
 
         if (loginResult != null) {
 
@@ -112,13 +121,16 @@ public class MemberController {
     public ResponseEntity<?> delete(@RequestBody MemberDto deleteMember,
                                     HttpServletResponse response, HttpServletRequest request) throws Exception {
 
+        Long cookieId = 0L;
         String cookieEmail = "";
         String cookiePwd = "";
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("email"))
+                if (cookie.getName().equals("id"))
+                    cookieId = Long.valueOf(cookie.getValue());
+                else if (cookie.getName().equals("email"))
                     cookieEmail = cookie.getValue();
                 else if (cookie.getName().equals("pwd"))
                     cookiePwd = cookie.getValue();
@@ -126,6 +138,15 @@ public class MemberController {
         }
 
         if ((deleteMember.getPwd().equals(deleteMember.getPwd2())) && (deleteMember.getPwd().equals(cookiePwd))) {
+            // 게시글 삭제
+            Optional<MemberEntity> memberEntity = memberRepository.findById(cookieId);
+            if (postRepository.existsByUserId(memberEntity.get())) {
+                List<Post> postEntity = postRepository.findByUserId(memberEntity.get());
+                for (int i = 0; i < postEntity.size(); i++) {
+                    postRepository.deleteById(postEntity.get(i).getId());
+                }
+            }
+
             memberService.delete(cookieEmail);
 
             Cookie deleteId = new Cookie("id", null);
@@ -238,5 +259,24 @@ public class MemberController {
         } else {
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/isSeller")
+    public ResponseEntity<?> isSeller(HttpServletRequest request) {
+        String cookieRole = "";
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("role"))
+                    cookieRole = cookie.getValue();
+            }
+        }
+
+        if (cookieRole.equals("Seller"))
+            return new ResponseEntity<>("판매자", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("구매자", HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,6 +1,5 @@
 package apptive.fruitable.login.controller;
 
-import apptive.fruitable.login.dto.MemberDto;
 import apptive.fruitable.login.service.EmailService;
 import apptive.fruitable.login.service.MemberService;
 import lombok.RequiredArgsConstructor;
