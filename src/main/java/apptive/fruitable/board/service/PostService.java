@@ -1,8 +1,9 @@
 package apptive.fruitable.board.service;
 
 import apptive.fruitable.board.domain.post.Post;
-import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.domain.tag.Tag;
+import apptive.fruitable.board.dto.post.PostDto;
+import apptive.fruitable.board.dto.post.PostRequestDto;
 import apptive.fruitable.board.handler.S3Uploader;
 import apptive.fruitable.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final TagService tagService;
     private final S3Uploader s3Uploader;
 
     /**
@@ -30,19 +32,14 @@ public class PostService {
      */
     @Transactional
     public Long savePost(PostRequestDto requestDto,
-                         List<MultipartFile> files) throws Exception {
+                         List<MultipartFile> files,
+                         List<String> contentList) throws Exception {
 
         Post post = new Post();
         post.updatePost(requestDto);
 
-        //이미지 등록
-        List<String> filePath = s3Uploader.uploadFiles(files);
-        List<String> fileURL = new ArrayList<>();
-        for (String url : filePath) {
-            fileURL.add(s3Uploader.getFile(url));
-        }
-        post.setFilePath(filePath);
-        post.setFileURL(fileURL);
+        //태그 등록
+        saveUpdate(files, contentList, post);
 
         postRepository.save(post);
 
@@ -85,6 +82,8 @@ public class PostService {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+
+        tagService.deleteTag(post);
         postRepository.deleteById(id);
     }
 
@@ -92,12 +91,28 @@ public class PostService {
     public Long update(
             Long id,
             PostRequestDto requestDto,
-            List<MultipartFile> files
+            List<MultipartFile> files,
+            List<String> contentList
     ) throws IOException {
 
         //상품 수정
         Post post = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
+
+        //태그 업데이트 및 사진 업데이트
+        tagService.deleteTag(post);
+        saveUpdate(files, contentList, post);
+
+        post.updatePost(requestDto);
+
+        postRepository.save(post);
+
+        return post.getId();
+    }
+
+    private void saveUpdate(List<MultipartFile> files, List<String> contentList, Post post) {
+        List<String> tagList = tagService.saveTag(post, contentList);
+        post.setTagList(tagList);
 
         List<String> filePath = s3Uploader.uploadFiles(files);
 
@@ -108,11 +123,5 @@ public class PostService {
 
         post.setFilePath(filePath);
         post.setFileURL(fileURL);
-
-        post.updatePost(requestDto);
-
-        postRepository.save(post);
-
-        return post.getId();
     }
 }

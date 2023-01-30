@@ -1,11 +1,12 @@
 package apptive.fruitable.board.controller;
 
-import apptive.fruitable.board.dto.PostDto;
-import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.dto.post.PostDto;
+import apptive.fruitable.board.dto.post.PostRequestDto;
 import apptive.fruitable.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,10 +53,11 @@ public class PostController {
                     MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public Long write(@Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
-                      @RequestPart(value = "images") List<MultipartFile> photoFileList
+                      @RequestPart(value = "images") List<MultipartFile> photoFileList,
+                      @RequestPart(value = "tags") List<String> contentList
                       ) throws Exception {
 
-        return postService.savePost(requestDto, photoFileList);
+        return postService.savePost(requestDto, photoFileList, contentList);
     }
 
     /**
@@ -84,14 +86,15 @@ public class PostController {
     @CrossOrigin
     public ResponseEntity<?> update(@PathVariable Long postId,
                                     @Valid @RequestPart(value = "requestDto") PostRequestDto requestDto,
-                                    @RequestPart(value = "images") List<MultipartFile> photoFileList) {
+                                    @RequestPart(value = "images") List<MultipartFile> photoFileList,
+                                    @RequestPart(value = "tags") List<String> contentList) {
 
         if(postId == null) {
             return new ResponseEntity<>("게시글이 존재하는지 확인해주세요.", HttpStatus.BAD_REQUEST);
         }
 
         try {
-            postService.update(postId, requestDto, photoFileList);
+            postService.update(postId, requestDto, photoFileList, contentList);
             return new ResponseEntity<>("업데이트에 성공했습니다.", HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("게시글 업데이트에 실패했습니다.", HttpStatus.BAD_REQUEST);

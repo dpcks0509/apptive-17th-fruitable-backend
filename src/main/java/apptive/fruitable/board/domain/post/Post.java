@@ -1,6 +1,7 @@
 package apptive.fruitable.board.domain.post;
 
-import apptive.fruitable.board.dto.PostRequestDto;
+import apptive.fruitable.board.domain.tag.Tag;
+import apptive.fruitable.board.dto.post.PostRequestDto;
 import apptive.fruitable.converter.StringListConverter;
 import apptive.fruitable.login.entity.MemberEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,6 +28,10 @@ public class Post {
     @JsonIgnore
     //@JoinColumn(name = "member_id")
     private MemberEntity userId;
+
+    @Convert(converter = StringListConverter.class)
+    private List<String> tagList;
+
     @Column(nullable = false, length = 20)
     private String contact;
 
@@ -40,8 +45,6 @@ public class Post {
     @Column(nullable = false)
     private Integer price;
     private LocalDate endDate;
-    @Convert(converter = StringListConverter.class)
-    private List<String> tags;
 
     @Column
     @Convert(converter = StringListConverter.class)
@@ -59,6 +62,5 @@ public class Post {
         this.content =  postDto.getContent();
         this.price = postDto.getPrice();
         this.endDate = postDto.getEndDate();
-        this.tags = postDto.getTags();
     }
 }
