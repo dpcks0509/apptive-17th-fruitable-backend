@@ -55,8 +55,8 @@ cloud:
     s3:
       bucket: fruitable-bucket
     credentials:
-      access-key: AKIA36W7FXMSOMKY4IGK
-      secret-key: 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
+      access-key:
+      secret-key:
     region:
       static: ap-northeast-2
       auto: false
