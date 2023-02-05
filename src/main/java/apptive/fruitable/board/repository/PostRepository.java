@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findByUserId(MemberEntity memberEntity);
     boolean existsByUserId(MemberEntity userId);
+    List<Post> findAllByTagList(String tagContent);
 }

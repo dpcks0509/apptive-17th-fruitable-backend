@@ -38,7 +38,7 @@ public class PostService {
         Post post = new Post();
         post.updatePost(requestDto);
 
-        //태그 등록
+        //태그 및 이미지 등록
         saveUpdate(files, contentList, post);
 
         postRepository.save(post);
