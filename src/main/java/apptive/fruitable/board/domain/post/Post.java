@@ -53,6 +53,9 @@ public class Post {
     @Column
     @Convert(converter = StringListConverter.class)
     private List<String> fileURL;
+    @Column
+    @Convert(converter = StringListConverter.class)
+    private List<String> localFilePath;
 
     public void updatePost(PostRequestDto postDto) {
         this.userId = postDto.getUserId();
@@ -62,5 +65,6 @@ public class Post {
         this.content =  postDto.getContent();
         this.price = postDto.getPrice();
         this.endDate = postDto.getEndDate();
+        this.localFilePath = postDto.getLocalFilePath();
     }
 }
