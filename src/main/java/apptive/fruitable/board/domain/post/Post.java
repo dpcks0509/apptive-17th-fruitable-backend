@@ -32,13 +32,13 @@ public class Post {
     @Convert(converter = StringListConverter.class)
     private List<String> tagList;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 5000)
     private String contact;
 
     //게시글 필요 정보
     @Column(nullable = false)
     private Integer vege; //0 - 과일, 1 - 채소
-    @Column(length = 20, nullable = false)
+    @Column(length = 1000, nullable = false)
     private String title;
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
